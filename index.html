@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pranay Vilas - Elite Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation (Fixed Menu Bar) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">Pranay Vilas</div>
+            <ul class="nav-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Hello, Welcome to My Elite Profile</h1>
+            <p>Unveiling expertise in computing science and innovation</p>
+            <a href="#about" class="btn">Discover More</a>
+        </div>
+        <div class="hero-overlay"></div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h1>About Me</h1>
+            <div class="about-content">
+                <p>I am Begari Pranay Vilas, an ambitious MSc Computing Science student excelling in full-stack development, cloud computing, and data analytics. With a knack for crafting scalable web solutions and harnessing AWS and Azure, I bring innovation to every project. As a fresher with part-time experience at an Amazon warehouse, I am actively seeking internship opportunities in the United Kingdom to elevate my career.</p>
+                <p>Certified in AWS, Microsoft Azure, Python, Java, and MySQL, I am poised to tackle complex technological challenges with finesse.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="section">
+        <div class="container">
+            <h1>Education</h1>
+            <div class="education-grid">
+                <div class="education-card">
+                    <img src="https://equalengineers.com/wp-content/uploads/2018/08/Edinburgh-Napier-logo-scaled.jpeg" alt="Edinburgh Napier University Logo" class="education-logo">
+                    <h3>MSc Computing Science</h3>
+                    <p>Edinburgh Napier University</p>
+                </div>
+                <div class="education-card">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Vignan_logo.png/1200px-Vignan_logo.png" alt="Vignan Institute Logo" class="education-logo">
+                    <h3>Bachelors in CSE (AI & ML)</h3>
+                    <p>Vignan Institute of Technology</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="section">
+        <div class="container">
+            <h1>Skills</h1>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Programming Languages</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">Java</span>
+                        <span class="skill-tag">JavaScript</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Cloud & Databases</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">Azure</span>
+                        <span class="skill-tag">MySQL</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Tools & Frameworks</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">TensorFlow</span>
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">VS Code</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="section">
+        <div class="container">
+            <h1>Key Projects</h1>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3>QR Code Generator</h3>
+                    <p>A dynamic web app built with Python and JavaScript.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>JavaScript</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3>Wildfire Detection</h3>
+                    <p>AI-driven solution using satellite imagery on AWS.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>AWS</span>
+                        <span>Machine Learning</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <h3>Skin Cancer Detection</h3>
+                    <p>Machine learning model deployed on Azure.</p>
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>Azure</span>
+                        <span>Deep Learning</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h1>Contact Me</h1>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>pranayvilas67@gmail.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+91 95056 73353 / +44 7554466973</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-linkedin"></i>
+                        <a href="https://www.linkedin.com/in/pranay-vilas-a380691b0">LinkedIn Profile</a>
+                    </div>
+                </div>
+                <form id="contact-form" class="contact-form">
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; Begari Pranay Vilas. All rights reserved. | Updated: 10:19 PM GMT, Sunday, October 26, 2025</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
