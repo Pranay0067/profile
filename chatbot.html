@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pranay Vilas - AI Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f4f4f4;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chatbot {
+            width: 400px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background: #2c3e50;
+            color: #fff;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chatbot-header h3 {
+            flex: 1;
+        }
+
+        .minimize-btn, .close-btn {
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #fff;
+            transition: color 0.3s;
+        }
+
+        .minimize-btn:hover, .close-btn:hover {
+            color: #3498db;
+        }
+
+        .chatbot-body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chatbot-messages {
+            padding: 15px;
+            height: 300px;
+            overflow-y: auto;
+            background: #f9f9f9;
+        }
+
+        .chatbot-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+
+        .user-message {
+            background: #e8f0fe;
+            color: #2c3e50;
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .bot-message {
+            background: #f2f4f9;
+            color: #34495e;
+            align-self: flex-start;
+            text-align: left;
+        }
+
+        .chat-options {
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            background: #ecf0f1;
+            justify-content: center;
+        }
+
+        .chat-options button {
+            padding: 8px 15px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .chat-options button:hover {
+            background: #2980b9;
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .query-box {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .send-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #2980b9;
+        }
+
+        #game-container {
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        #sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 30px);
+            grid-template-rows: repeat(9, 30px);
+            gap: 1px;
+            margin-bottom: 10px;
+        }
+
+        .sudoku-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        .sudoku-input {
+            width: 100%;
+            text-align: center;
+            border: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 500px) {
+            .chatbot {
+                width: 90%;
+            }
+
+            .chat-options button {
+                font-size: 0.8rem;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- AI Chatbot -->
+    <div class="chatbot">
+        <div class="chatbot-header">
+            <h3>Pranay Vilas AI Chatbot</h3>
+            <span id="minimize-btn" class="minimize-btn">-</span>
+            <span id="close-btn" class="close-btn">&times;</span>
+        </div>
+        <div id="chatbot-body" class="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages"></div>
+            <div class="chat-options">
+                <button onclick="showProfileSummary()">Profile Summary</button>
+                <button onclick="startQuiz()">Start Quiz</button>
+                <button onclick="loadSudoku()">Sudoku</button>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="query-box" placeholder="Type your message..." class="query-box">
+                <button id="send-btn" class="send-btn">Send</button>
+            </div>
+            <div id="game-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const messages = document.getElementById('chatbot-messages');
+        const queryBox = document.getElementById('query-box');
+        const sendBtn = document.getElementById('send-btn');
+        const minimizeBtn = document.getElementById('minimize-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const chatbotBody = document.getElementById('chatbot-body');
+        const gameContainer = document.getElementById('game-container');
+
+        // Profile Summary
+        function showProfileSummary() {
+            const summary = "I'm Begari Pranay Vilas, a passionate MSc Computing Science student with expertise in full-stack development, cloud computing, and data analytics. I specialize in building scalable web applications and leveraging AWS and Azure for cloud-based solutions. My projects range from AI-driven applications like Skin Cancer Detection to data analytics for tourism. I'm a fresher, currently working part-time in an Amazon warehouse, and looking for internship opportunities in the United Kingdom. Certified in AWS, Microsoft Azure, Python, Java, and MySQL.";
+            appendMessage('bot-message', summary);
+        }
+
+        // Start Quiz
+        const quizQuestions = [
+            { question: "What is my degree?", options: ["MSc Computing Science", "BSc Biology", "MBA"], answer: 0 },
+            { question: "One of my skills is?", options: ["Python", "Cooking", "Painting"], answer: 0 },
+            { question: "One of my projects is?", options: ["QR Code Generator", "Car Manufacturing", "Book Writing"], answer: 0 }
+        ];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+
+        function startQuiz() {
+            currentQuizIndex = 0;
+            quizScore = 0;
+            gameContainer.innerHTML = '';
+            appendMessage('bot-message', 'Starting quiz! Answer with option number (1, 2, 3).');
+            askQuizQuestion();
+        }
+
+        function askQuizQuestion() {
+            if (currentQuizIndex < quizQuestions.length) {
+                const q = quizQuestions[currentQuizIndex];
+                appendMessage('bot-message', q.question);
+                q.options.forEach((opt, index) => {
+                    appendMessage('bot-message', `${index + 1}. ${opt}`);
+                });
+            } else {
+                appendMessage('bot-message', `Quiz over! Your score: ${quizScore}/${quizQuestions.length}`);
+            }
+        }
+
+        function checkQuizAnswer(userAnswer) {
+            const correctIndex = quizQuestions[currentQuizIndex].answer;
+            if (parseInt(userAnswer) - 1 === correctIndex) {
+                quizScore++;
+                appendMessage('bot-message', 'Correct!');
+            } else {
+                appendMessage('bot-message', 'Wrong. The correct answer was ' + (correctIndex + 1));
+            }
+            currentQuizIndex++;
+            askQuizQuestion();
+        }
+
+        // Load Sudoku from Online (Using WebSudoku Widget)
+        function loadSudoku() {
+            gameContainer.innerHTML = '<iframe src="//widget.websudoku.com/?level=1" width="240" height="260" scrolling="no" frameborder="0"></iframe>';
+            appendMessage('bot-message', 'Sudoku loaded! Play the game above.');
+        }
+
+        // Append Message to Chat
+        function appendMessage(className, text) {
+            const div = document.createElement('div');
+            div.className = `chatbot-message ${className}`;
+            div.textContent = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // Send Button Listener
+        sendBtn.addEventListener('click', () => {
+            const userMessage = queryBox.value.trim();
+            if (userMessage) {
+                appendMessage('user-message', 'You: ' + userMessage);
+                if (currentQuizIndex < quizQuestions.length && !isNaN(parseInt(userMessage))) {
+                    checkQuizAnswer(userMessage);
+                } else {
+                    appendMessage('bot-message', 'Sorry, I didn\'t understand. Use the options above.');
+                }
+                queryBox.value = '';
+            }
+        });
+
+        queryBox.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendBtn.click();
+        });
+
+        // Minimize Button
+        minimizeBtn.addEventListener('click', () => {
+            if (chatbotBody.style.display === 'none') {
+                chatbotBody.style.display = 'block';
+                minimizeBtn.textContent = '-';
+            } else {
+                chatbotBody.style.display = 'none';
+                minimizeBtn.textContent = '+';
+            }
+        });
+
+        // Close Button
+        closeBtn.addEventListener('click', () => {
+            document.getElementById('chatbot').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
