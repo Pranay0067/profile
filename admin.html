@@ -1,45 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin – Messages</title>
-  <script src="https://cdn.jsdelivr.net/npm/supabase-js@2"></script>
-  <style>
-    body{font-family:Arial;background:#f4f4f4;padding:40px}
-    table{width:100%;border-collapse:collapse;margin-top:20px}
-    th,td{border:1px solid #ddd;padding:12px;text-align:left}
-    th{background:#2c3e50;color:#fff}
-  </style>
+    <meta charset="UTF-8">
+    <title>Admin – Messages Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial; background: #f4f4f4; padding: 20px; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        button { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #2980b9; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #2c3e50; color: white; }
+        .delete-btn { background: #e74c3c; }
+        .delete-btn:hover { background: #c0392b; }
+        .no-data { text-align: center; color: #7f8c8d; font-style: italic; }
+        .loading { text-align: center; color: #3498db; }
+    </style>
 </head>
 <body>
-  <h1>Contact & Chatbot Messages</h1>
-  <button onclick="loadMessages()">Refresh</button>
-  <table id="msg-table">
-    <thead><tr><th>Name</th><th>Email</th><th>Message</th><th>Date</th></tr></thead>
-    <tbody></tbody>
-  </table>
+    <div class="container">
+        <h1>Contact & Chatbot Messages Dashboard</h1>
+        <button onclick="loadMessages()">🔄 Refresh</button>
+        <button onclick="clearAllMessages()" class="delete-btn">🗑️ Clear All (Caution!)</button>
+        <div id="status" class="loading">Loading messages...</div>
+        <table id="msg-table" style="display: none;">
+            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Message</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+        </table>
+        <div id="no-data" class="no-data" style="display: none;">No messages yet.</div>
+    </div>
 
-  <script>
-    const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';  // Replace
-    const SUPABASE_KEY = 'YOUR-ANON-KEY';  // Replace
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script>
+        // Supabase Setup – REPLACE WITH YOUR CREDENTIALS
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co';
+        const SUPABASE_KEY = 'YOUR_ANON_KEY';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function loadMessages() {
-      const { data, error } = await supabaseClient
-        .from('messages')
-        .select('*')
-        .order('created_at', { ascending: false });
+        const statusEl = document.getElementById('status');
+        const tableEl = document.getElementById('msg-table');
+        const noDataEl = document.getElementById('no-data');
+        const tbody = tableEl.querySelector('tbody');
 
-      if (error) { console.error(error); return; }
-      const tbody = document.querySelector('#msg-table tbody');
-      tbody.innerHTML = '';
-      data.forEach(m => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${m.name}</td><td>${m.email}</td><td>${m.message}</td><td>${new Date(m.created_at).toLocaleString()}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-    loadMessages();  // Auto-load on page open
-  </script>
+        // Load & Display Messages (Query DB)
+        async function loadMessages() {
+            statusEl.textContent = 'Loading...';
+            const { data, error } = await supabaseClient
+                .from('messages')
+                .select('*')
+                .order('created_at', { ascending: false });  // Newest first
+
+            if (error) {
+                statusEl.textContent = 'Error loading: ' + error.message;
+                console.error(error);
+                return;
+            }
+
+            tbody.innerHTML = '';
+            if (data.length === 0) {
+                noDataEl.style.display = 'block';
+                tableEl.style.display = 'none';
+            } else {
+                noDataEl.style.display = 'none';
+                tableEl.style.display = 'table';
+                data.forEach((m) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${m.id.slice(0, 8)}...</td>
+                        <td>${m.name}</td>
+                        <td>${m.email || 'N/A (Chatbot)'}</td>
+                        <td>${m.message}</td>
+                        <td>${new Date(m.created_at).toLocaleString()}</td>
+                        <td><button onclick="deleteMessage('${m.id}')" class="delete-btn">Delete</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+            statusEl.textContent = `${data.length} messages loaded.`;
+        }
+
+        // Delete Single Message
+        async function deleteMessage(id) {
+            if (!confirm('Delete this message?')) return;
+            const { error } = await supabaseClient.from('messages').delete().eq('id', id);
+            if (error) { alert('Delete failed: ' + error.message); console.error(error); }
+            else { loadMessages(); }  // Refresh
+        }
+
+        // Clear All Messages
+        async function clearAllMessages() {
+            if (!confirm('Delete ALL messages? This is permanent!')) return;
+            const { error } = await supabaseClient.from('messages').delete();
+            if (error) { alert('Clear failed: ' + error.message); console.error(error); }
+            else { loadMessages(); }
+        }
+
+        // Auto-load on page open
+        loadMessages();
+    </script>
 </body>
 </html>
