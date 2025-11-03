@@ -1,39 +1,39 @@
-// Smooth Scroll
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
-    });
-});
+// Current date in footer (update to 2025 format)
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-GB');
 
-// Contact Form (Formspree)
+// Supabase Setup – REPLACE WITH YOUR CREDENTIALS
+const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co';  // e.g., https://abc123xyz.supabase.co
+const SUPABASE_KEY = 'YOUR_ANON_KEY';  // e.g., eyJhbGciOiJIUzI1NiIs...
+
+// Import Supabase (CDN for HTML)
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Contact Form Handler
 const form = document.getElementById('contact-form');
-if (form) {
-    form.action = "https://formspree.io/f/your_formspree_id"; // Replace with your ID
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        const fd = new FormData(form);
-        fetch(form.action, { method: 'POST', body: fd, headers: { 'Accept': 'application/json' } })
-            .then(() => { alert("Message sent!"); form.reset(); })
-            .catch(() => alert("Error. Try again."));
-    });
-}
+const status = document.getElementById('form-status');  // Add <div id="form-status"></div> after form in index.html if missing
 
-// Fade In
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = 1;
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, { threshold: 0.1 });
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(form);
+  const data = {
+    name: fd.get('name'),
+    email: fd.get('email'),
+    message: fd.get('message'),
+    created_at: new Date().toISOString()
+  };
 
-document.querySelectorAll('.section').forEach(sec => {
-    sec.style.opacity = 0;
-    sec.style.transform = 'translateY(20px)';
-    sec.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(sec);
+  const { error } = await supabaseClient
+    .from('messages')
+    .insert([data]);
+
+  if (error) {
+    status.textContent = 'Error – try again';
+    status.style.color = '#dc2626';
+    console.error('DB Error:', error);
+  } else {
+    status.textContent = 'Message saved! I’ll reply soon.';
+    status.style.color = '#16a34a';
+    form.reset();
+  }
 });
